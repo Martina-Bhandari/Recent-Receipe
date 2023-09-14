@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Recipe App</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <nav>
+      <h1>Recipe App</h1>
+      
+    </nav>
+    <div class="container">
+      <div class="left-column">
+        <h3>Add Recipe</h3>
+        <form enctype="multipart/form-data">
+          <label for="recipe-name">Name:</label>
+          <input type="text" id="recipe-name" required><br />
+
+          <label for="recipe-ingredients">Ingredients:</label>
+          <textarea id="recipe-ingredients" rows="5" required></textarea><br />
+
+          <label for="recipe-method">Instruction:</label>
+          <textarea id="recipe-method" rows="5" required></textarea><br />
+
+          <label for="recipe-image">Image:</label>
+          <input type="file" id="recipe-image" accept="image/*"><br />
+
+          <button type="submit">Add Recipe</button>
+        </form>
+      </div>
+      <div class="right-column">
+        <div id="search-section">
+          <h3>Recipes List</h3>
+          <label for="search-box">Search:</label>
+          <input type="text" id="search-box">
+        </div>
+        <div id="recipe-list"></div>
+        <div id="no-recipes">Thank You!!</div>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Sample recipe data with image URLs
+        const recipes = [
+          {
+            name: "Momos",
+            ingredients: "Ground meat, Flour, Ginger, Garlic, Soy sauce, Sesame oil, Cilantro, Green onions",
+            method: "1. Prepare the filling by mixing ground meat, ginger, garlic, soy sauce, and green onions. 2. Roll out the dough and fill it with the meat mixture. 3. Steam the momos until cooked through. 4. Serve with a dipping sauce made from sesame oil, soy sauce, and cilantro.",
+            image: "Images/momos.jpg",
+          },
+          {
+            name: "Pizza",
+            ingredients: "Pizza dough, Tomato sauce, Cheese, Pepperoni, Bell peppers, Onions",
+            method: "1. Roll out the pizza dough. 2. Spread tomato sauce on the dough. 3. Add cheese, pepperoni, bell peppers, and onions. 4. Bake until the crust is golden brown.",
+            image: "Images/pizza.jpg",
+          },
+          {
+            name: "Burger",
+            ingredients: "Ground beef, Burger buns, Lettuce, Tomato, Onion, Cheese, Ketchup, Mustard",
+            method: "1. Grill the ground beef patties. 2. Toast the burger buns. 3. Assemble the burger with lettuce, tomato, onion, cheese, ketchup, and mustard.",
+            image: "Images/burger.jpg",
+          },
+          {
+            name: "Sel Roti",
+            ingredients: "Rice flour, Sugar, Milk, Cardamom",
+            method: "1. Prepare a batter by mixing rice flour, sugar, milk, and cardamom. 2. Heat oil in a pan and shape the batter into rings. 3. Deep-fry until golden brown. 4. Serve with tea or yogurt.",
+            image: "Images/selroti.jpg",
+          },
+          {
+            name: "Chicken Chow Mein",
+            ingredients: "Chicken, Noodles, Bell peppers, Carrots, Soy sauce, Garlic, Ginger",
+            method: "1. Cook chicken and set aside. 2. Boil noodles and drain. 3. Stir-fry bell peppers, carrots, garlic, and ginger. 4. Add chicken, noodles, and soy sauce.",
+            image: "Images/chicken-chow-mein.jpg",
+          },
+          {
+            name: "Yomari",
+            ingredients: "Rice flour, Jaggery, Sesame seeds",
+            method: "1. Prepare a dough from rice flour. 2. Fill the dough with a mixture of jaggery and sesame seeds. 3. Steam until cooked. 4. Enjoy this sweet treat.",
+            image: "Images/yomari.jpg",
+          },
+          {
+            name: "Kima Noodle",
+            ingredients: "Ground beef, Noodles, Onion, Garlic, Tomato sauce, Spices",
+            method: "1. Cook ground beef, onion, and garlic. 2. Add tomato sauce and spices. 3. Serve over cooked noodles.",
+            image: "Images/kima-noodle.jpg",
+          },
+          {
+            name: "Choila",
+            ingredients: "Boneless chicken, Spices, Mustard oil, Lemon juice, Garlic, Ginger",
+            method: "1. Grill boneless chicken and shred it. 2. Mix with spices, mustard oil, lemon juice, garlic, and ginger. 3. Serve as a spicy appetizer.",
+            image: "Images/choila.jpg",
+          },
+          {
+            name: "Popcorn",
+            ingredients: "Popcorn kernels, Butter, Salt",
+            method: "1. Pop the popcorn kernels. 2. Melt butter and drizzle over the popcorn. 3. Sprinkle with salt and enjoy.",
+            image: "Images/popcorn.jpg",
+          },
+          {
+            name: "Newari Bara",
+            ingredients: "Lentils, Spices, Oil",
+            method: "1. Soak lentils, grind them into a batter, and add spices. 2. Heat oil and pour a ladle of batter to make pancakes. 3. Fry until golden brown. 4. Serve with spicy sauces.",
+            image: "Images/newaribara.jpg",
+          },
+        ];
+
+        const recipeList = document.getElementById("recipe-list");
+
+        // Function to display recipes
+        function displayRecipes() {
+          // Clear existing content
+          recipeList.innerHTML = "";
+
+          // Loop through the recipe data and create elements for each recipe
+          recipes.forEach((recipe, index) => {
+            const recipeDiv = document.createElement("div");
+            recipeDiv.className = "recipe";
+
+            const recipeImage = document.createElement("img");
+            recipeImage.src = recipe.image;
+            recipeImage.alt = recipe.name;
+
+            const recipeTitle = document.createElement("h4");
+            recipeTitle.textContent = recipe.name;
+
+            const recipeIngredients = document.createElement("p");
+            recipeIngredients.textContent = "Ingredients: " + recipe.ingredients;
+
+            const recipeMethod = document.createElement("p");
+            recipeMethod.textContent = "Steps: " + recipe.method;
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.addEventListener("click", () => {
+              deleteRecipe(index);
+            });
+
+            recipeDiv.appendChild(recipeImage);
+            recipeDiv.appendChild(recipeTitle);
+            recipeDiv.appendChild(recipeIngredients);
+            recipeDiv.appendChild(recipeMethod);
+            recipeDiv.appendChild(deleteButton);
+
+            recipeList.appendChild(recipeDiv);
+          });
+
+          // Show "Thank You!!" if there are no recipes
+          if (recipes.length === 0) {
+            const noRecipes = document.getElementById("no-recipes");
+            noRecipes.style.display = "block";
+          }
+        }
+
+        // Function to delete a recipe
+        function deleteRecipe(index) {
+          if (confirm("Are you sure you want to delete this recipe?")) {
+            recipes.splice(index, 1);
+            displayRecipes();
+          }
+        }
+
+        // Call the function to display recipes
+        displayRecipes();
+      });
+    </script>
+  </body>
+</html>
